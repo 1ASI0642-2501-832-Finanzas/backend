@@ -2,7 +2,7 @@ package me.ryzeon.finanzas.config;
 
 
 import lombok.AllArgsConstructor;
-import me.ryzeon.authservice.filter.JwtAuthFilter;
+import me.ryzeon.finanzas.filter.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,13 +47,19 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/register",
-                                "/auth/login",
+                                "/api/v1/auth/**",
+                                "/api/v1/status/ping",
+                                "/docs",
+                                "/api/v1/documentation",
+                                "/v1/api-docs/**",
+                                "/v1/api-docs.yaml",
+                                "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/auth/swagger-ui/**",
-                                "/auth/v3/api-docs/**",
                                 "/swagger-resources/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/webjars",
+                                "/favicon.ico",
+                                "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

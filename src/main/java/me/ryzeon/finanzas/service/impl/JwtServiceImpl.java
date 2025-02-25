@@ -3,7 +3,7 @@ package me.ryzeon.finanzas.service.impl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import me.ryzeon.authservice.service.JwtService;
+import me.ryzeon.finanzas.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

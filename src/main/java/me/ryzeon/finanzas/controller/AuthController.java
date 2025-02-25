@@ -3,10 +3,10 @@ package me.ryzeon.finanzas.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import me.ryzeon.authservice.dto.AuthRequest;
-import me.ryzeon.authservice.dto.AuthResponse;
-import me.ryzeon.authservice.dto.RegisterRequest;
-import me.ryzeon.authservice.service.AuthService;
+import me.ryzeon.finanzas.dto.AuthRequest;
+import me.ryzeon.finanzas.dto.AuthResponse;
+import me.ryzeon.finanzas.dto.RegisterRequest;
+import me.ryzeon.finanzas.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("api/v1/auth")
 @Tag(name = "Autenticación", description = "Endpoints para la autenticación de usuarios")
 @AllArgsConstructor
 public class AuthController {

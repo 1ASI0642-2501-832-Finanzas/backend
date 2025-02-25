@@ -1,14 +1,14 @@
 package me.ryzeon.finanzas.service.impl;
 
 import lombok.AllArgsConstructor;
-import me.ryzeon.authservice.dto.AuthRequest;
-import me.ryzeon.authservice.dto.AuthResponse;
-import me.ryzeon.authservice.dto.RegisterRequest;
-import me.ryzeon.authservice.entity.Role;
-import me.ryzeon.authservice.entity.User;
-import me.ryzeon.authservice.repository.UserRepository;
-import me.ryzeon.authservice.service.AuthService;
-import me.ryzeon.authservice.service.JwtService;
+import me.ryzeon.finanzas.dto.AuthRequest;
+import me.ryzeon.finanzas.dto.AuthResponse;
+import me.ryzeon.finanzas.dto.RegisterRequest;
+import me.ryzeon.finanzas.entity.Role;
+import me.ryzeon.finanzas.entity.User;
+import me.ryzeon.finanzas.repository.UserRepository;
+import me.ryzeon.finanzas.service.AuthService;
+import me.ryzeon.finanzas.service.JwtService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.authentication.AuthenticationManager;

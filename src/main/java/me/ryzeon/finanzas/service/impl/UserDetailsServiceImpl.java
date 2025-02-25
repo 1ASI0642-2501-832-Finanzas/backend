@@ -1,8 +1,8 @@
 package me.ryzeon.finanzas.service.impl;
 
 import lombok.AllArgsConstructor;
-import me.ryzeon.authservice.entity.User;
-import me.ryzeon.authservice.repository.UserRepository;
+import me.ryzeon.finanzas.entity.User;
+import me.ryzeon.finanzas.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
