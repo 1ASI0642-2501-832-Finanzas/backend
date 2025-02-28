@@ -13,9 +13,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API de Autenticación")
+                        .title("API de Finanzas para Portafolio")
                         .version("1.0")
-                        .description("API para la gestión de autenticación con JWT en microservicios")
+                        .description("API para la gestión de autenticación con JWT en microservicios de finanzas")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org"))
                 );
     }

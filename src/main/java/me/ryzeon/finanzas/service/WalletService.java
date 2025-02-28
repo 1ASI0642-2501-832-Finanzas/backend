@@ -3,6 +3,8 @@ package me.ryzeon.finanzas.service;
 import jakarta.transaction.Transactional;
 import me.ryzeon.finanzas.dto.CreateWalletRequest;
 import me.ryzeon.finanzas.entity.Wallet;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +26,6 @@ public interface WalletService {
     Optional<Wallet> getWalletById(Long id);
 
     void updateTcea(Wallet wallet);
+
+    ResponseEntity<Resource> generateReport(Long id);
 }

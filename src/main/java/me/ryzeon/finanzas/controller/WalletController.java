@@ -1,11 +1,13 @@
 package me.ryzeon.finanzas.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import me.ryzeon.finanzas.dto.CreateWalletRequest;
 import me.ryzeon.finanzas.dto.WalletDto;
 import me.ryzeon.finanzas.entity.Wallet;
 import me.ryzeon.finanzas.service.WalletService;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +56,11 @@ public class WalletController {
     @DeleteMapping("{id}")
     public void deleteWallet(@PathVariable Long id) {
         walletService.deleteWalletById(id);
+    }
+
+    @Operation(summary = "Generates a PDF report for a wallet", description = "Returns a PDF report with wallet details and invoices")
+    @GetMapping("/{id}/report")
+    public ResponseEntity<Resource> generateReport(@PathVariable Long id) {
+        return walletService.generateReport(id);
     }
 }

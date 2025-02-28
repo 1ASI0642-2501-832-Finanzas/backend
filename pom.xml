@@ -78,6 +78,14 @@
             <version>2.8.5</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.itextpdf/pdfa -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>pdfa</artifactId>
+            <version>9.1.0</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
