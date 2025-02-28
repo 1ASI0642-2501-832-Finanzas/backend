@@ -17,7 +17,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("api/v1/invoice")
-@Tag(name = "Wallet", description = "Endpoints para la gestión de billeteras")
+@Tag(name = "Invoice", description = "Endpoints para la gestión de facturas")
 @AllArgsConstructor
 public class InvoiceController {
 
