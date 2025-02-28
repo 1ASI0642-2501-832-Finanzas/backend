@@ -22,8 +22,8 @@ public record WalletDto(
 
         Date discountDate,
 
-        BigDecimal tcea,
-        ) {
+        BigDecimal tcea
+) {
 
     public WalletDto(Wallet wallet) {
         this(wallet.getId(), wallet.getName(), wallet.getDescription(), wallet.getDiscountDate(), wallet.getTcea());
