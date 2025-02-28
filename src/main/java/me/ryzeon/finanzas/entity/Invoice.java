@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Alex Avila Asto - A.K.A (Ryzeon)
@@ -47,6 +48,8 @@ public class Invoice {
 
     private Date emissionDate;
 
+    private Date dueDate;
+
     private Date discountDate;
 
     private String terms;
@@ -57,9 +60,22 @@ public class Invoice {
     @Column(precision = 5, scale = 2)
     private BigDecimal effectiveRate;
 
-    private String initialCurrency;
 
-    private String finalCurrency;
+    @ManyToMany
+    @JoinTable(
+            name = "invoice_costs",
+            joinColumns = @JoinColumn(name = "invoice_id"),
+            inverseJoinColumns = @JoinColumn(name = "costs_id")
+    )
+    private List<Costs> initialCosts;
+
+    @ManyToMany
+    @JoinTable(
+            name = "invoice_costs",
+            joinColumns = @JoinColumn(name = "invoice_id"),
+            inverseJoinColumns = @JoinColumn(name = "costs_id")
+    )
+    private List<Costs> finalCosts;
 
     private String status;
 
