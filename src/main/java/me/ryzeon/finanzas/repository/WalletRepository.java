@@ -1,8 +1,11 @@
 package me.ryzeon.finanzas.repository;
 
+import me.ryzeon.finanzas.entity.User;
 import me.ryzeon.finanzas.entity.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by Alex Avila Asto - A.K.A (Ryzeon)
@@ -11,4 +14,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
+
+    List<Wallet> findAllByUser(User user);
 }

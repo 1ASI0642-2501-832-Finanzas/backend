@@ -46,6 +46,10 @@ public class AuthServiceImpl implements AuthService, ApplicationContextAware {
             throw new RuntimeException("El correo ya está registrado.");
         }
 
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("El nombre de usuario ya está en uso.");
+        }
+
         User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())

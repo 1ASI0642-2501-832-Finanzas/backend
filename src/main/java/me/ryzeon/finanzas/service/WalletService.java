@@ -1,9 +1,10 @@
 package me.ryzeon.finanzas.service;
 
 import jakarta.transaction.Transactional;
-import me.ryzeon.finanzas.dto.WalletDto;
+import me.ryzeon.finanzas.dto.CreateWalletRequest;
 import me.ryzeon.finanzas.entity.Wallet;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,7 +15,11 @@ import java.util.Optional;
 public interface WalletService {
 
     @Transactional
-    Optional<Wallet> createWallet(WalletDto walletDto);
+    Optional<Wallet> createWallet(CreateWalletRequest request);
+
+    List<Wallet> getWalletsByUserIdentifier(String identifier);
+
+    void deleteWalletById(Long id);
 
     Optional<Wallet> getWalletById(Long id);
 }

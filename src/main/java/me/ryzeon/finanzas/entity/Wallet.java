@@ -1,7 +1,9 @@
 package me.ryzeon.finanzas.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,6 +15,8 @@ import java.util.Date;
  */
 @Entity
 @Data
+@Builder
+@RequiredArgsConstructor
 public class Wallet {
 
     @Id
@@ -30,4 +34,5 @@ public class Wallet {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
 }

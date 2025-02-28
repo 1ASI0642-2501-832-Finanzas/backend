@@ -3,6 +3,7 @@ package me.ryzeon.finanzas.dto;
 import jakarta.validation.constraints.NotBlank;
 import me.ryzeon.finanzas.entity.Wallet;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -12,15 +13,20 @@ import java.util.Date;
  */
 public record WalletDto(
         Long id,
+
         @NotBlank
         String name,
+
         @NotBlank
         String description,
-        Date discountDate,
-        Long userId
-) {
 
-        public static WalletDto from(Wallet wallet) {
-                return new WalletDto(wallet.getId(), wallet.getName(), wallet.getDescription(), wallet.getDiscountDate(), wallet.getUser().getId());
-        }
+        Date discountDate,
+
+        BigDecimal tcea,
+        ) {
+
+    public WalletDto(Wallet wallet) {
+        this(wallet.getId(), wallet.getName(), wallet.getDescription(), wallet.getDiscountDate(), wallet.getTcea());
+    }
 }
+

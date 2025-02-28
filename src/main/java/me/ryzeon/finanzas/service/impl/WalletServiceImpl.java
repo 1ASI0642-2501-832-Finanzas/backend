@@ -1,13 +1,17 @@
 package me.ryzeon.finanzas.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import me.ryzeon.finanzas.dto.CreateWalletRequest;
 import me.ryzeon.finanzas.dto.WalletDto;
+import me.ryzeon.finanzas.entity.User;
 import me.ryzeon.finanzas.entity.Wallet;
 import me.ryzeon.finanzas.repository.WalletRepository;
 import me.ryzeon.finanzas.service.UserService;
 import me.ryzeon.finanzas.service.WalletService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,13 +27,28 @@ public class WalletServiceImpl implements WalletService {
     private final UserService userService;
 
     @Override
-    public Optional<Wallet> createWallet(WalletDto walletDto) {
-        Wallet wallet = new Wallet();
-        wallet.setName(walletDto.name());
-        wallet.setDescription(walletDto.description());
-        wallet.setDiscountDate(walletDto.discountDate());
-        wallet.setUser(userService.findById(walletDto.userId()).orElseThrow());
+    public Optional<Wallet> createWallet(CreateWalletRequest request) {
+        User user = userService.findByIdentifier(request.userIdentifier()).orElseThrow();
+        Wallet wallet = Wallet.builder()
+                .name(request.name())
+                .description(request.description())
+                .discountDate(request.discountDate())
+                .tcea(BigDecimal.ZERO)
+                .user(user)
+                .build();
+
         return Optional.of(walletRepository.save(wallet));
+    }
+
+    @Override
+    public List<Wallet> getWalletsByUserIdentifier(String identifier) {
+        User user = userService.findByIdentifier(identifier).orElseThrow();
+        return walletRepository.findAllByUser(user);
+    }
+
+    @Override
+    public void deleteWalletById(Long id) {
+        walletRepository.deleteById(id);
     }
 
     @Override
