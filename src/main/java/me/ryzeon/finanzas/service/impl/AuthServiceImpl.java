@@ -11,10 +11,12 @@ import me.ryzeon.finanzas.service.AuthService;
 import me.ryzeon.finanzas.service.JwtService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 
@@ -43,11 +45,11 @@ public class AuthServiceImpl implements AuthService, ApplicationContextAware {
     @Override
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("El correo ya está registrado.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST ,"El correo ya está registrado.");
         }
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("El nombre de usuario ya está en uso.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre de usuario ya está en uso.");
         }
 
         User user = User.builder()

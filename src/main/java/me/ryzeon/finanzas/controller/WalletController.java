@@ -11,7 +11,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -45,12 +47,18 @@ public class WalletController {
     }
 
     @PostMapping
-    public String createWallet(@RequestBody CreateWalletRequest request) {
+    public ResponseEntity<?> createWallet(@RequestBody CreateWalletRequest request) {
         Wallet wallet = walletService.createWallet(request).orElse(null);
         if (wallet == null) {
-            return "redirect:/";
+            return ResponseEntity.badRequest().build();
         }
-        return "redirect:/api/v1/wallet/" + wallet.getId();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(wallet.getId())
+                .toUri();
+        WalletDto walletDto = new WalletDto(wallet);
+        return ResponseEntity.created(location).body(walletDto);
     }
 
     @DeleteMapping("{id}")
