@@ -22,6 +22,7 @@ import java.util.Date;
 public class Invoice {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String invoiceType;
