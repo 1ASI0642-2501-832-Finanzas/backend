@@ -22,4 +22,6 @@ public interface WalletService {
     void deleteWalletById(Long id);
 
     Optional<Wallet> getWalletById(Long id);
+
+    void updateTcea(Wallet wallet);
 }

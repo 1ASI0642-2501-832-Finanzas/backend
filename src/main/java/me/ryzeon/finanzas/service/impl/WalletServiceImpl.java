@@ -3,8 +3,10 @@ package me.ryzeon.finanzas.service.impl;
 import lombok.RequiredArgsConstructor;
 import me.ryzeon.finanzas.dto.CreateWalletRequest;
 import me.ryzeon.finanzas.dto.WalletDto;
+import me.ryzeon.finanzas.entity.Invoice;
 import me.ryzeon.finanzas.entity.User;
 import me.ryzeon.finanzas.entity.Wallet;
+import me.ryzeon.finanzas.repository.InvoiceRepository;
 import me.ryzeon.finanzas.repository.WalletRepository;
 import me.ryzeon.finanzas.service.UserService;
 import me.ryzeon.finanzas.service.WalletService;
@@ -25,6 +27,7 @@ public class WalletServiceImpl implements WalletService {
 
     public final WalletRepository walletRepository;
     private final UserService userService;
+    private final InvoiceRepository invoiceRepository;
 
     @Override
     public Optional<Wallet> createWallet(CreateWalletRequest request) {
@@ -54,5 +57,19 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Optional<Wallet> getWalletById(Long id) {
         return walletRepository.findById(id);
+    }
+
+    @Override
+    public void updateTcea(Wallet wallet) {
+        List<Invoice> invoices = invoiceRepository.findAllByWallet(wallet);
+
+        BigDecimal tcea = invoices.stream()
+                .map(Invoice::getTcea)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(invoices.size()));
+
+        wallet.setTcea(tcea);
+
+        walletRepository.save(wallet);
     }
 }
