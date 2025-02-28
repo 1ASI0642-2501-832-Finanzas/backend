@@ -11,4 +11,7 @@ public class AuthResponse {
 
     @Schema(description = "Token JWT generado tras autenticación", example = "eyJhbGciOiJIUzI1NiIsInR5...")
     private String token;
+
+    @Schema(description = "Identificador del usuario autenticado, puede ser id, correo, o user", example = "john.doe")
+    private String userIdentifier;
 }
