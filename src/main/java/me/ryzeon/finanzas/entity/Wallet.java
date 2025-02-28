@@ -1,9 +1,7 @@
 package me.ryzeon.finanzas.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -16,7 +14,8 @@ import java.util.Date;
 @Entity
 @Data
 @Builder
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class Wallet {
 
     @Id
