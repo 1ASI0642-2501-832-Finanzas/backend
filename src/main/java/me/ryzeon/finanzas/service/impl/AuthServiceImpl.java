@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService, ApplicationContextAware {
 
         String token = jwtService.generateToken(user.getEmail());
 
-        return new AuthResponse(token);
+        return new AuthResponse(token, user.getEmail());
     }
 
     @Override
