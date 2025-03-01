@@ -79,7 +79,7 @@ public class Invoice {
 
     private String status;
 
-    @Column(precision = 7, scale = 2)
+    @Column(precision = 10, scale = 2)
     private BigDecimal tcea;
 
     @ManyToOne

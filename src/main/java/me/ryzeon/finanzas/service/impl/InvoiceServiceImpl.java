@@ -13,6 +13,7 @@ import me.ryzeon.finanzas.service.InvoiceService;
 import me.ryzeon.finanzas.service.WalletService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -122,6 +123,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .wallet(wallet)
                 .build();
 
+        if (invoice.getTcea().compareTo(new BigDecimal("99999.99")) > 0) {
+            throw new IllegalArgumentException("TCEA value exceeds the maximum allowed value of 99999.99");
+        }
+        
         Optional<Invoice> invoiceOptional = Optional.of(invoiceRepository.save(invoice));
         walletService.updateTcea(wallet);
         return invoiceOptional;

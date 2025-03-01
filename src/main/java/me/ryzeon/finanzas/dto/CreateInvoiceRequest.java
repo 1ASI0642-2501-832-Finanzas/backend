@@ -66,14 +66,14 @@ public record CreateInvoiceRequest(
 
         // Initial Costs (CI)
         BigDecimal initialCostsTotal = initialCosts != null ? initialCosts.stream()
-                .map(cost -> cost.type().equals("percentage") ?
+                .map(cost -> cost.type().toLowerCase().equalsIgnoreCase("percentage") ?
                         nominalValue.multiply(cost.value().divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP))
                         : cost.value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add) : BigDecimal.ZERO;
 
         // Final Costs (CF)
         BigDecimal finalCostsTotal = finalCosts != null ? finalCosts.stream()
-                .map(cost -> cost.type().equals("percentage") ? nominalValue.multiply(cost.value().divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)) : cost.value())
+                .map(cost -> cost.type().toLowerCase().equalsIgnoreCase("percentage") ? nominalValue.multiply(cost.value().divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)) : cost.value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add) : BigDecimal.ZERO;
 
         // Net Received Value (VNR)
@@ -86,10 +86,23 @@ public record CreateInvoiceRequest(
             throw new IllegalArgumentException("VNR or VNP is less than or equal to zero, cannot calculate TCEA");
         }
 
+        if (discountDays < 1) {
+            throw new IllegalArgumentException("Discount period must be at least 1 day.");
+        }
+
         // TCEA Calculation
         double exponent = 360.0 / discountDays;
-        double tceaCalculated = Math.pow(netPaidValue.divide(netReceivedValue, 10, RoundingMode.HALF_UP).doubleValue(), exponent) - 1;
 
+        BigDecimal ratio = netPaidValue.divide(netReceivedValue, 10, RoundingMode.HALF_UP);
+        if (ratio.compareTo(BigDecimal.valueOf(1000)) >= 0) {
+            throw new IllegalArgumentException("Ratio of netPaidValue to netReceivedValue is too large, cannot calculate TCEA");
+        }
+
+        double tceaCalculated = Math.pow(ratio.doubleValue(), exponent) - 1;
+
+        if (Double.isNaN(tceaCalculated) || Double.isInfinite(tceaCalculated)) {
+            throw new IllegalArgumentException("TCEA calculation resulted in NaN or Infinity");
+        }
         return BigDecimal.valueOf(tceaCalculated).multiply(BigDecimal.valueOf(100)).setScale(4, RoundingMode.HALF_UP);
     }
 }
