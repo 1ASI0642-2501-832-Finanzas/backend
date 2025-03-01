@@ -1,8 +1,10 @@
 package me.ryzeon.finanzas.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import me.ryzeon.finanzas.dto.CostsDto;
 import me.ryzeon.finanzas.dto.CreateInvoiceRequest;
+import me.ryzeon.finanzas.dto.InvoiceDto;
 import me.ryzeon.finanzas.entity.Invoice;
 import me.ryzeon.finanzas.entity.Wallet;
 import me.ryzeon.finanzas.repository.InvoiceRepository;
@@ -11,6 +13,7 @@ import me.ryzeon.finanzas.service.InvoiceService;
 import me.ryzeon.finanzas.service.WalletService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,7 +27,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final WalletService walletService;
-    private final CostsService   costsService;
+    private final CostsService costsService;
 
     @Override
     public void deleteInvoice(Long id) {
@@ -50,23 +53,23 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .nominalRate(request.nominalRate())
                 .effectiveRate(request.effectiveRate())
                 .initialCosts(
-                    costsService.saveAll(
-                        request.initialCosts()
-                                .stream()
-                                .map(CostsDto::toEntity)
-                                .toList()
-                    )
+                        costsService.saveAll(
+                                request.initialCosts()
+                                        .stream()
+                                        .map(CostsDto::toEntity)
+                                        .toList()
+                        )
                 )
                 .finalCosts(
-                    costsService.saveAll(
-                        request.finalCosts()
-                                .stream()
-                                .map(CostsDto::toEntity)
-                                .toList()
-                    )
+                        costsService.saveAll(
+                                request.finalCosts()
+                                        .stream()
+                                        .map(CostsDto::toEntity)
+                                        .toList()
+                        )
                 )
                 .status(request.status())
-                .tcea(request.calculateTcea())
+                .tcea(request.calculateTCEA())
                 .wallet(wallet)
                 .build();
 
@@ -115,12 +118,19 @@ public class InvoiceServiceImpl implements InvoiceService {
                                 .toList()
                 )
                 .status(request.status())
-                .tcea(request.calculateTcea())
+                .tcea(request.calculateTCEA())
                 .wallet(wallet)
                 .build();
 
         Optional<Invoice> invoiceOptional = Optional.of(invoiceRepository.save(invoice));
         walletService.updateTcea(wallet);
         return invoiceOptional;
+    }
+
+    @Override
+    public List<InvoiceDto> getInvoicesByWalletId(Long walletId) {
+        Wallet wallet = walletService.getWalletById(walletId).orElseThrow(() -> new EntityNotFoundException("Wallet not found"));
+        List<Invoice> invoices = invoiceRepository.findAllByWallet(wallet);
+        return invoices.stream().map(InvoiceDto::new).toList();
     }
 }

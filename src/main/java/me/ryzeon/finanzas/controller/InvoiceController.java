@@ -3,11 +3,13 @@ package me.ryzeon.finanzas.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import me.ryzeon.finanzas.dto.CreateInvoiceRequest;
+import me.ryzeon.finanzas.dto.InvoiceDto;
 import me.ryzeon.finanzas.entity.Invoice;
 import me.ryzeon.finanzas.service.InvoiceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,20 +31,27 @@ public class InvoiceController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Invoice> getInvoiceById(@PathVariable Long id) {
+    public ResponseEntity<InvoiceDto> getInvoiceById(@PathVariable Long id) {
         Optional<Invoice> invoice = invoiceService.getInvoiceById(id);
-        return invoice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return invoice.map(InvoiceDto::new).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/all/{walletId}")
+    public ResponseEntity<List<InvoiceDto>> getInvoicesByWalletId(@PathVariable Long walletId) {
+        return ResponseEntity.ok(invoiceService.getInvoicesByWalletId(walletId));
     }
 
     @PostMapping
-    public ResponseEntity<Invoice> createInvoice(@RequestBody CreateInvoiceRequest request) {
+    public ResponseEntity<InvoiceDto> createInvoice(@RequestBody CreateInvoiceRequest request) {
         Optional<Invoice> invoice = invoiceService.createInvoice(request);
-        return invoice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        InvoiceDto invoiceDto = new InvoiceDto(invoice.orElseThrow());
+        return ResponseEntity.ok(invoiceDto);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody CreateInvoiceRequest request) {
+    public ResponseEntity<InvoiceDto> updateInvoice(@PathVariable Long id, @RequestBody CreateInvoiceRequest request) {
         Optional<Invoice> invoice = invoiceService.updateInvoice(id, request);
-        return invoice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        InvoiceDto invoiceDto = new InvoiceDto(invoice.orElseThrow());
+        return ResponseEntity.ok(invoiceDto);
     }
 }

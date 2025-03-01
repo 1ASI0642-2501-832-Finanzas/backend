@@ -1,8 +1,10 @@
 package me.ryzeon.finanzas.service;
 
 import me.ryzeon.finanzas.dto.CreateInvoiceRequest;
+import me.ryzeon.finanzas.dto.InvoiceDto;
 import me.ryzeon.finanzas.entity.Invoice;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -22,4 +24,6 @@ public interface InvoiceService {
     Optional<Invoice> getInvoiceById(Long id);
 
     Optional<Invoice> updateInvoice(Long id, CreateInvoiceRequest request);
+
+    List<InvoiceDto> getInvoicesByWalletId(Long walletId);
 }

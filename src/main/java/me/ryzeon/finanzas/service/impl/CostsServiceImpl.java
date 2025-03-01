@@ -23,10 +23,6 @@ public class CostsServiceImpl implements CostsService {
 
     @Override
     public List<Costs> saveAll(List<Costs> costs) {
-        return costs.stream()
-        .map(
-            c -> saveCosts(c)
-        )
-        .collect(Collectors.toList());
+        return costs.stream().map(this::saveCosts).toList();
     }
 }

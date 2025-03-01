@@ -2,6 +2,8 @@ package me.ryzeon.finanzas.dto;
 
 import me.ryzeon.finanzas.entity.Costs;
 
+import java.math.BigDecimal;
+
 /**
  * Created by Alex Avila Asto - A.K.A (Ryzeon)
  * Project: finanzas
@@ -9,7 +11,7 @@ import me.ryzeon.finanzas.entity.Costs;
  */
 public record CostsDto(
         String reason,
-        String value,
+        BigDecimal value,
         String type
 ) {
     public static Costs toEntity(CostsDto costsDto) {
