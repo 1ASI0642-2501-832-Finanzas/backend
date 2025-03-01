@@ -2,7 +2,6 @@ package me.ryzeon.finanzas.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import me.ryzeon.finanzas.dto.CreateWalletRequest;
-import me.ryzeon.finanzas.dto.WalletDto;
 import me.ryzeon.finanzas.entity.Invoice;
 import me.ryzeon.finanzas.entity.User;
 import me.ryzeon.finanzas.entity.Wallet;
