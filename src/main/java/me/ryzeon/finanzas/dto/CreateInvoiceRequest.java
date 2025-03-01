@@ -35,7 +35,7 @@ public record CreateInvoiceRequest(
     /**
      * Calculates the Annual Effective Cost Rate (TCEA) based on the invoice data.
      *
-     * @return The TCEA as a percentage with two decimal places.
+     * @return The TCEA as a percentage with four decimal places.
      * @throws IllegalArgumentException If required values are null or invalid.
      */
     public BigDecimal calculateTCEA() {
@@ -90,8 +90,6 @@ public record CreateInvoiceRequest(
         double exponent = 360.0 / discountDays;
         double tceaCalculated = Math.pow(netPaidValue.divide(netReceivedValue, 10, RoundingMode.HALF_UP).doubleValue(), exponent) - 1;
 
-        return BigDecimal.valueOf(tceaCalculated).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP);
+        return BigDecimal.valueOf(tceaCalculated).multiply(BigDecimal.valueOf(100)).setScale(4, RoundingMode.HALF_UP);
     }
-
-
 }
