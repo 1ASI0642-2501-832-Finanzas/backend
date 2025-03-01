@@ -78,10 +78,15 @@ public class WalletServiceImpl implements WalletService {
     public void updateTcea(Wallet wallet) {
         List<Invoice> invoices = invoiceRepository.findAllByWallet(wallet);
 
-        BigDecimal tcea = invoices.stream()
-                .map(Invoice::getTcea)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .divide(BigDecimal.valueOf(invoices.size()));
+        BigDecimal totalWeightedTCEA = invoices.stream()
+                .map(invoice -> invoice.getTcea().multiply(invoice.getAmount()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalAmount = invoices.stream()
+                .map(Invoice::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal tcea = totalWeightedTCEA.divide(totalAmount, 4, BigDecimal.ROUND_HALF_UP);
 
         wallet.setTcea(tcea);
 

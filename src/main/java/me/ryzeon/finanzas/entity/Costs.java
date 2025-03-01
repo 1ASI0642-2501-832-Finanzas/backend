@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * Created by Alex Avila Asto - A.K.A (Ryzeon)
  * Project: finanzas
@@ -25,7 +27,7 @@ public class Costs {
 
     private String reason;
 
-    private String value;
+    private BigDecimal value;
 
     private String type;
 }
