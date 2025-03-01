@@ -5,6 +5,8 @@ import me.ryzeon.finanzas.entity.Invoice;
 
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Created by Alex Avila Asto - A.K.A (Ryzeon)
  * Project: finanzas
@@ -14,6 +16,7 @@ public interface InvoiceService {
 
     void deleteInvoice(Long id);
 
+    @Transactional
     Optional<Invoice> createInvoice(CreateInvoiceRequest request);
 
     Optional<Invoice> getInvoiceById(Long id);

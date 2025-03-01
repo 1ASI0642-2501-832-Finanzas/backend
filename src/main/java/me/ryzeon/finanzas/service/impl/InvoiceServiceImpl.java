@@ -6,6 +6,7 @@ import me.ryzeon.finanzas.dto.CreateInvoiceRequest;
 import me.ryzeon.finanzas.entity.Invoice;
 import me.ryzeon.finanzas.entity.Wallet;
 import me.ryzeon.finanzas.repository.InvoiceRepository;
+import me.ryzeon.finanzas.service.CostsService;
 import me.ryzeon.finanzas.service.InvoiceService;
 import me.ryzeon.finanzas.service.WalletService;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final WalletService walletService;
+    private final CostsService   costsService;
 
     @Override
     public void deleteInvoice(Long id) {
@@ -48,16 +50,20 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .nominalRate(request.nominalRate())
                 .effectiveRate(request.effectiveRate())
                 .initialCosts(
+                    costsService.saveAll(
                         request.initialCosts()
                                 .stream()
                                 .map(CostsDto::toEntity)
                                 .toList()
+                    )
                 )
                 .finalCosts(
+                    costsService.saveAll(
                         request.finalCosts()
                                 .stream()
                                 .map(CostsDto::toEntity)
                                 .toList()
+                    )
                 )
                 .status(request.status())
                 .tcea(request.calculateTcea())
