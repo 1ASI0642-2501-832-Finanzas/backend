@@ -1,5 +1,8 @@
 package me.ryzeon.finanzas.dto;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
@@ -32,10 +35,12 @@ public record CreateInvoiceRequest(
         Long walletId
 ) {
 
+    private static final Logger log = LoggerFactory.getLogger(CreateInvoiceRequest.class);
+
     /**
      * Calculates the Annual Effective Cost Rate (TCEA) based on the invoice data.
      *
-     * @return The TCEA as a percentage with four decimal places.
+     * @return The TCEA as a percentage with two decimal places.
      * @throws IllegalArgumentException If required values are null or invalid.
      */
     public BigDecimal calculateTCEA() {
@@ -52,6 +57,11 @@ public record CreateInvoiceRequest(
             throw new IllegalArgumentException("Due date must be after discount date");
         }
 
+        // Ensure discount period is reasonable
+        if (discountDays < 5) {
+            throw new IllegalArgumentException("Discount period is too short, leads to extreme TCEA values.");
+        }
+
         // Nominal Value (VN)
         BigDecimal nominalValue = amount;
 
@@ -66,14 +76,14 @@ public record CreateInvoiceRequest(
 
         // Initial Costs (CI)
         BigDecimal initialCostsTotal = initialCosts != null ? initialCosts.stream()
-                .map(cost -> cost.type().toLowerCase().equalsIgnoreCase("percentage") ?
+                .map(cost -> cost.type().equalsIgnoreCase("percentage") ?
                         nominalValue.multiply(cost.value().divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP))
                         : cost.value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add) : BigDecimal.ZERO;
 
         // Final Costs (CF)
         BigDecimal finalCostsTotal = finalCosts != null ? finalCosts.stream()
-                .map(cost -> cost.type().toLowerCase().equalsIgnoreCase("percentage") ? nominalValue.multiply(cost.value().divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)) : cost.value())
+                .map(cost -> cost.type().equalsIgnoreCase("percentage") ? nominalValue.multiply(cost.value().divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)) : cost.value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add) : BigDecimal.ZERO;
 
         // Net Received Value (VNR)
@@ -82,27 +92,29 @@ public record CreateInvoiceRequest(
         // Net Paid Value (VNP)
         BigDecimal netPaidValue = nominalValue.add(finalCostsTotal);
 
-        if (netReceivedValue.compareTo(BigDecimal.ZERO) <= 0 || netPaidValue.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("VNR or VNP is less than or equal to zero, cannot calculate TCEA");
+        if (netReceivedValue.compareTo(BigDecimal.valueOf(10)) < 0) {
+            throw new IllegalArgumentException("Net Received Value (VNR) is too small, leading to an unrealistic TCEA.");
         }
 
-        if (discountDays < 1) {
-            throw new IllegalArgumentException("Discount period must be at least 1 day.");
+        // Ensure VNP/VNR ratio is reasonable
+        BigDecimal ratio = netPaidValue.divide(netReceivedValue, 10, RoundingMode.HALF_UP);
+        if (ratio.compareTo(BigDecimal.valueOf(5)) > 0) {
+            throw new IllegalArgumentException("Ratio too high, possible calculation error.");
         }
 
         // TCEA Calculation
         double exponent = 360.0 / discountDays;
-
-        BigDecimal ratio = netPaidValue.divide(netReceivedValue, 10, RoundingMode.HALF_UP);
-        if (ratio.compareTo(BigDecimal.valueOf(1000)) >= 0) {
-            throw new IllegalArgumentException("Ratio of netPaidValue to netReceivedValue is too large, cannot calculate TCEA");
-        }
-
         double tceaCalculated = Math.pow(ratio.doubleValue(), exponent) - 1;
 
-        if (Double.isNaN(tceaCalculated) || Double.isInfinite(tceaCalculated)) {
-            throw new IllegalArgumentException("TCEA calculation resulted in NaN or Infinity");
+        if (Double.isNaN(tceaCalculated) || Double.isInfinite(tceaCalculated) || tceaCalculated * 100 > 100) {
+            log.error("Calculated TCEA is unrealistically high: {}", tceaCalculated);
+            throw new IllegalArgumentException("Calculated TCEA is unrealistically high.");
         }
-        return BigDecimal.valueOf(tceaCalculated).multiply(BigDecimal.valueOf(100)).setScale(4, RoundingMode.HALF_UP);
+
+        BigDecimal tcea = BigDecimal.valueOf(tceaCalculated).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP);
+        log.info("TCEA calculated: {}", tcea);
+        return tcea;
     }
+
+
 }

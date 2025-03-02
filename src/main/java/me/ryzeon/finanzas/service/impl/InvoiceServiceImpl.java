@@ -126,7 +126,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getTcea().compareTo(new BigDecimal("99999.99")) > 0) {
             throw new IllegalArgumentException("TCEA value exceeds the maximum allowed value of 99999.99");
         }
-        
+
         Optional<Invoice> invoiceOptional = Optional.of(invoiceRepository.save(invoice));
         walletService.updateTcea(wallet);
         return invoiceOptional;
