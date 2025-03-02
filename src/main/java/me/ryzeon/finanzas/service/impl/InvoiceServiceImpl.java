@@ -107,16 +107,20 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .nominalRate(request.nominalRate())
                 .effectiveRate(request.effectiveRate())
                 .initialCosts(
-                        request.initialCosts()
-                                .stream()
-                                .map(CostsDto::toEntity)
-                                .toList()
+                        costsService.saveAll(
+                                request.initialCosts()
+                                        .stream()
+                                        .map(CostsDto::toEntity)
+                                        .toList()
+                        )
                 )
                 .finalCosts(
-                        request.finalCosts()
-                                .stream()
-                                .map(CostsDto::toEntity)
-                                .toList()
+                        costsService.saveAll(
+                                request.finalCosts()
+                                        .stream()
+                                        .map(CostsDto::toEntity)
+                                        .toList()
+                        )
                 )
                 .status(request.status())
                 .tcea(request.calculateTCEA())
