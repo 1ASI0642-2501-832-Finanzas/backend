@@ -40,6 +40,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Wallet wallet = walletService.getWalletById(request.walletId()).orElseThrow(() -> new RuntimeException("Wallet not found"));
         Invoice invoice = Invoice.builder()
                 .invoiceType(request.invoiceType())
+                .financialInstitutionName(request.financialInstitutionName())
                 .number(request.number())
                 .series(request.series())
                 .issuerName(request.issuerName())
@@ -93,6 +94,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = Invoice.builder()
                 .id(id)
                 .invoiceType(request.invoiceType())
+                .financialInstitutionName(request.financialInstitutionName())
                 .number(request.number())
                 .series(request.series())
                 .issuerName(request.issuerName())
