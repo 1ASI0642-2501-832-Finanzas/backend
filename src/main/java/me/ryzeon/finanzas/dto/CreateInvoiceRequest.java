@@ -53,9 +53,9 @@ public record CreateInvoiceRequest(
         }
 
         long discountDays = (dueDate.getTime() - discountDate.getTime()) / (1000 * 3600 * 24);
-        if (discountDays <= 0) {
-            throw new IllegalArgumentException("Due date must be after discount date");
-        }
+//        if (discountDays <= 0) {
+//            throw new IllegalArgumentException("Due date must be after discount date");
+//        }
 
         // Ensure discount period is reasonable
         if (discountDays < 5) {
