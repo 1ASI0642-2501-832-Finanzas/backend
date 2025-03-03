@@ -9,6 +9,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import me.ryzeon.finanzas.dto.CreateWalletRequest;
 import me.ryzeon.finanzas.entity.Invoice;
@@ -66,6 +67,9 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void deleteWalletById(Long id) {
+        if (!walletRepository.existsById(id)) {
+            throw new EntityNotFoundException("Wallet not found");
+        }
         walletRepository.deleteById(id);
     }
 

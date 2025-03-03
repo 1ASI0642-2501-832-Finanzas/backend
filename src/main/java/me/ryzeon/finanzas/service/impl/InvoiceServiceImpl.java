@@ -33,6 +33,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public void deleteInvoice(Long id) {
+        if (!invoiceRepository.existsById(id)) {
+            throw new EntityNotFoundException("Invoice not found");
+        }
         invoiceRepository.deleteById(id);
     }
 
