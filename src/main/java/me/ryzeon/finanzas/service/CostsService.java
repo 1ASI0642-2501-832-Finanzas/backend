@@ -15,4 +15,10 @@ public interface CostsService {
     @Transactional
     List<Costs> saveAll(List<Costs> costs);
 
+
+    @Transactional
+    void deleteCosts(Long id);
+
+    @Transactional
+    void deleteAllCosts(List<Long> ids);
 }

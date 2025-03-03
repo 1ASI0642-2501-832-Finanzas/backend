@@ -63,7 +63,7 @@ public class Invoice {
 
     @ManyToMany
     @JoinTable(
-            name = "invoice_costs",
+            name = "initial_costs",
             joinColumns = @JoinColumn(name = "invoice_id"),
             inverseJoinColumns = @JoinColumn(name = "costs_id")
     )
@@ -71,7 +71,7 @@ public class Invoice {
 
     @ManyToMany
     @JoinTable(
-            name = "invoice_costs",
+            name = "final_costs",
             joinColumns = @JoinColumn(name = "invoice_id"),
             inverseJoinColumns = @JoinColumn(name = "costs_id")
     )

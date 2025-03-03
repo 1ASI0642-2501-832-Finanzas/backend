@@ -25,4 +25,14 @@ public class CostsServiceImpl implements CostsService {
     public List<Costs> saveAll(List<Costs> costs) {
         return costs.stream().map(this::saveCosts).toList();
     }
+
+    @Override
+    public void deleteCosts(Long id) {
+        costsRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAllCosts(List<Long> ids) {
+        ids.forEach(this::deleteCosts);
+    }
 }

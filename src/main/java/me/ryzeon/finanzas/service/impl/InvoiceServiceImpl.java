@@ -98,6 +98,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         existingInvoice.getFinalCosts().clear();
         existingInvoice.getInitialCosts().clear();
 
+
+
         invoiceRepository.save(existingInvoice);
 
         List<Costs> newInitialCosts = costsService.saveAll(
