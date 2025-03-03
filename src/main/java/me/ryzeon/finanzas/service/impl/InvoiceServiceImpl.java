@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import me.ryzeon.finanzas.dto.CostsDto;
 import me.ryzeon.finanzas.dto.CreateInvoiceRequest;
 import me.ryzeon.finanzas.dto.InvoiceDto;
+import me.ryzeon.finanzas.entity.Costs;
 import me.ryzeon.finanzas.entity.Invoice;
 import me.ryzeon.finanzas.entity.Wallet;
 import me.ryzeon.finanzas.repository.InvoiceRepository;
@@ -91,6 +92,22 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Optional<Invoice> updateInvoice(Long id, CreateInvoiceRequest request) {
         Wallet wallet = walletService.getWalletById(request.walletId()).orElseThrow(() -> new RuntimeException("Wallet not found"));
+
+        Invoice existingInvoice = invoiceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Invoice not found"));
+
+        existingInvoice.getFinalCosts().clear();
+        existingInvoice.getInitialCosts().clear();
+
+        invoiceRepository.save(existingInvoice);
+
+        List<Costs> newInitialCosts = costsService.saveAll(
+                request.initialCosts().stream().map(CostsDto::toEntity).toList()
+        );
+
+        List<Costs> newFinalCosts = costsService.saveAll(
+                request.finalCosts().stream().map(CostsDto::toEntity).toList()
+        );
+
         Invoice invoice = Invoice.builder()
                 .id(id)
                 .invoiceType(request.invoiceType())
@@ -108,22 +125,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .terms(request.terms())
                 .nominalRate(request.nominalRate())
                 .effectiveRate(request.effectiveRate())
-                .initialCosts(
-                        costsService.saveAll(
-                                request.initialCosts()
-                                        .stream()
-                                        .map(CostsDto::toEntity)
-                                        .toList()
-                        )
-                )
-                .finalCosts(
-                        costsService.saveAll(
-                                request.finalCosts()
-                                        .stream()
-                                        .map(CostsDto::toEntity)
-                                        .toList()
-                        )
-                )
+                .initialCosts(newInitialCosts)
+                .finalCosts(newFinalCosts)
                 .status(request.status())
                 .tcea(request.calculateTCEA())
                 .wallet(wallet)
