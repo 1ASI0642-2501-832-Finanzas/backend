@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import me.ryzeon.finanzas.dto.CreateWalletRequest;
+import me.ryzeon.finanzas.dto.UpdateWalletRequest;
 import me.ryzeon.finanzas.dto.WalletDto;
 import me.ryzeon.finanzas.entity.Wallet;
 import me.ryzeon.finanzas.service.WalletService;
@@ -70,5 +71,12 @@ public class WalletController {
     @GetMapping("/{id}/report")
     public ResponseEntity<Resource> generateReport(@PathVariable Long id) {
         return walletService.generateReport(id);
+    }
+
+    @Operation(summary = "Updates a wallet", description = "Updates a wallet with the given data")
+    @PutMapping("{id}")
+    public ResponseEntity<WalletDto> updateWallet(@PathVariable Long id, @RequestBody UpdateWalletRequest request) {
+        Wallet wallet = walletService.updateWallet(id, request).orElseThrow();
+        return ResponseEntity.ok(new WalletDto(wallet));
     }
 }

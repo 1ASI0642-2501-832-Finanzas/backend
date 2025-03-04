@@ -12,6 +12,7 @@ import com.itextpdf.layout.element.Table;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import me.ryzeon.finanzas.dto.CreateWalletRequest;
+import me.ryzeon.finanzas.dto.UpdateWalletRequest;
 import me.ryzeon.finanzas.entity.Invoice;
 import me.ryzeon.finanzas.entity.User;
 import me.ryzeon.finanzas.entity.Wallet;
@@ -154,5 +155,14 @@ public class WalletServiceImpl implements WalletService {
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @Override
+    public Optional<Wallet> updateWallet(Long id, UpdateWalletRequest request) {
+        Wallet wallet = walletRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Wallet not found"));
+        wallet.setName(request.name());
+        wallet.setDescription(request.description());
+        wallet.setDiscountDate(request.discountDate());
+        return Optional.of(walletRepository.save(wallet));
     }
 }
