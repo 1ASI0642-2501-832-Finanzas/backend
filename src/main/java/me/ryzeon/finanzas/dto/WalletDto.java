@@ -1,5 +1,6 @@
 package me.ryzeon.finanzas.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import me.ryzeon.finanzas.entity.Wallet;
 
@@ -20,6 +21,7 @@ public record WalletDto(
         @NotBlank
         String description,
 
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         Date discountDate,
 
         BigDecimal tcea

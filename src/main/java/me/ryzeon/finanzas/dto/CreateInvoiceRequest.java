@@ -1,5 +1,6 @@
 package me.ryzeon.finanzas.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * Date: 28/02/25 @ 05:09
  */
 public record CreateInvoiceRequest(
+
         String invoiceType,
         String financialInstitutionName,
         String number,
@@ -23,8 +25,11 @@ public record CreateInvoiceRequest(
         String currency,
         BigDecimal amount,
         BigDecimal igv,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         Date emissionDate,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         Date dueDate,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         Date discountDate,
         String terms,
         BigDecimal nominalRate,

@@ -1,10 +1,10 @@
 package me.ryzeon.finanzas.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import me.ryzeon.finanzas.entity.Costs;
 import me.ryzeon.finanzas.entity.Invoice;
-import me.ryzeon.finanzas.entity.Wallet;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -46,12 +46,15 @@ public record InvoiceDto(
         @NotNull
         BigDecimal igv,
 
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         @NotNull
         Date emissionDate,
 
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         @NotNull
         Date dueDate,
 
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         @NotNull
         Date discountDate,
 
