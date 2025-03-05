@@ -51,13 +51,13 @@ class FinanzasApplicationTests {
                 "12345678",
                 "Soles(PEN)",
                 new BigDecimal("10000"),
-                new BigDecimal("0"),
                 new Date(2025 - 1900, 1, 1),  // Emission Date (2025-02-01)
                 new Date(2025 - 1900, 6, 10), // Due Date (2025-07-10)
                 new Date(2025 - 1900, 3, 5),  // Discount Date (2025-04-05)
-                "string",
-                new BigDecimal("0"),   // Nominal Rate
-                new BigDecimal("12"),  // Effective Rate
+                "NI IDIEA Pa",
+                new BigDecimal(12),
+                new BigDecimal(
+                30),
                 List.of(initialCosts),
                 List.of(finalCosts),
                 "En progreso",

@@ -127,7 +127,7 @@ public class WalletServiceImpl implements WalletService {
             table.addHeaderCell(new Cell().add(new Paragraph("Series").setFont(bold)));
             table.addHeaderCell(new Cell().add(new Paragraph("Issuer").setFont(bold)));
             table.addHeaderCell(new Cell().add(new Paragraph("Amount").setFont(bold)));
-            table.addHeaderCell(new Cell().add(new Paragraph("IGV").setFont(bold)));
+            table.addHeaderCell(new Cell().add(new Paragraph("TE").setFont(bold)));
             table.addHeaderCell(new Cell().add(new Paragraph("Due Date").setFont(bold)));
             table.addHeaderCell(new Cell().add(new Paragraph("TCEA").setFont(bold)));
             table.addHeaderCell(new Cell().add(new Paragraph("Status").setFont(bold)));
@@ -138,7 +138,7 @@ public class WalletServiceImpl implements WalletService {
                 table.addCell(new Cell().add(new Paragraph(invoice.getSeries())));
                 table.addCell(new Cell().add(new Paragraph(invoice.getIssuerName() + " (" + invoice.getIssuerRuc() + ")")));
                 table.addCell(new Cell().add(new Paragraph("£" + invoice.getAmount())));
-                table.addCell(new Cell().add(new Paragraph("£" + invoice.getIgv())));
+                table.addCell(new Cell().add(new Paragraph("%" + invoice.getEffectiveRate())));
                 table.addCell(new Cell().add(new Paragraph(invoice.getDueDate().toString())));
                 table.addCell(new Cell().add(new Paragraph(invoice.getTcea() + "%")));
                 table.addCell(new Cell().add(new Paragraph(invoice.getStatus())));

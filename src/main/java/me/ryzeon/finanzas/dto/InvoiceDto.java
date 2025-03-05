@@ -43,9 +43,6 @@ public record InvoiceDto(
         @NotNull
         BigDecimal amount,
 
-        @NotNull
-        BigDecimal igv,
-
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         @NotNull
         Date emissionDate,
@@ -62,10 +59,10 @@ public record InvoiceDto(
         String terms,
 
         @NotNull
-        BigDecimal nominalRate,
+        BigDecimal effectiveRate,
 
         @NotNull
-        BigDecimal effectiveRate,
+        BigDecimal tepDays,
 
         @NotNull
         List<Costs> initialCosts,
@@ -79,28 +76,27 @@ public record InvoiceDto(
         @NotNull
         BigDecimal tcea
 ) {
-    public InvoiceDto(Invoice invoice) {
-        this(
-                invoice.getId(),
-                invoice.getInvoiceType(),
-                invoice.getFinancialInstitutionName(),
-                invoice.getNumber(),
-                invoice.getSeries(),
-                invoice.getIssuerName(),
-                invoice.getIssuerRuc(),
-                invoice.getCurrency(),
-                invoice.getAmount(),
-                invoice.getIgv(),
-                invoice.getEmissionDate(),
-                invoice.getDueDate(),
-                invoice.getDiscountDate(),
-                invoice.getTerms(),
-                invoice.getNominalRate(),
-                invoice.getEffectiveRate(),
-                invoice.getInitialCosts(),
-                invoice.getFinalCosts(),
-                invoice.getStatus(),
-                invoice.getTcea()
-        );
-    }
+        public InvoiceDto(Invoice invoice) {
+                this(
+                        invoice.getId(),
+                        invoice.getInvoiceType(),
+                        invoice.getFinancialInstitutionName(),
+                        invoice.getNumber(),
+                        invoice.getSeries(),
+                        invoice.getIssuerName(),
+                        invoice.getIssuerRuc(),
+                        invoice.getCurrency(),
+                        invoice.getAmount(),
+                        invoice.getEmissionDate(),
+                        invoice.getDueDate(),
+                        invoice.getDiscountDate(),
+                        invoice.getTerms(),
+                        invoice.getEffectiveRate(),
+                        invoice.getTepDays(),
+                        invoice.getInitialCosts(),
+                        invoice.getFinalCosts(),
+                        invoice.getStatus(),
+                        invoice.getTcea()
+                );
+        }
 }

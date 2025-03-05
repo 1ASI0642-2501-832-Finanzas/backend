@@ -24,7 +24,6 @@ public record CreateInvoiceRequest(
         String issuerRuc,
         String currency,
         BigDecimal amount,
-        BigDecimal igv,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         Date emissionDate,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
@@ -32,8 +31,8 @@ public record CreateInvoiceRequest(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         Date discountDate,
         String terms,
-        BigDecimal nominalRate,
         BigDecimal effectiveRate,
+        BigDecimal tepDays,
         List<CostsDto> initialCosts,
         List<CostsDto> finalCosts,
         String status,
@@ -57,69 +56,72 @@ public record CreateInvoiceRequest(
             throw new IllegalArgumentException("Amount must be greater than zero");
         }
 
-        long discountDays = (dueDate.getTime() - discountDate.getTime()) / (1000 * 3600 * 24);
-//        if (discountDays <= 0) {
-//            throw new IllegalArgumentException("Due date must be after discount date");
-//        }
+        BigDecimal effectiveRate = this.effectiveRate.divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
 
-        // Ensure discount period is reasonable
+        log.info("Effective Rate: {}", effectiveRate);
+
+        long discountDays = (dueDate.getTime() - discountDate.getTime()) / (1000 * 60 * 60 * 24);
+
+        log.info("Días calculados entre dueDate y discountDate: " + discountDays);
+
+        if (discountDays <= 0) {
+            throw new IllegalArgumentException("Due date must be after discount date");
+        }
+
         if (discountDays < 5) {
             throw new IllegalArgumentException("Discount period is too short, leads to extreme TCEA values.");
         }
 
-        // Nominal Value (VN)
-        BigDecimal nominalValue = amount;
 
-        // Effective annual rate in decimal format
-        BigDecimal effectiveRateDecimal = effectiveRate.divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
+        BigDecimal exponent = BigDecimal.valueOf(discountDays).divide(tepDays, 10, RoundingMode.HALF_UP);
+        log.info("Valor de exponente: {}", exponent);
 
-        // Discount Calculation (D)
-        BigDecimal discount = nominalValue.multiply(effectiveRateDecimal.multiply(BigDecimal.valueOf(discountDays)).divide(BigDecimal.valueOf(360), 10, RoundingMode.HALF_UP));
+        BigDecimal ten2 = BigDecimal.valueOf(Math.pow(BigDecimal.ONE.add(effectiveRate).doubleValue(), exponent.doubleValue())).subtract(BigDecimal.ONE);
+        log.info("Valor de ten2: {}", ten2);
 
-        // Delivered Value (VE)
-        BigDecimal deliveredValue = nominalValue.subtract(discount);
 
-        // Initial Costs (CI)
-        BigDecimal initialCostsTotal = initialCosts != null ? initialCosts.stream()
-                .map(cost -> cost.type().equalsIgnoreCase("percentage") ?
-                        nominalValue.multiply(cost.value().divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP))
-                        : cost.value())
-                .reduce(BigDecimal.ZERO, BigDecimal::add) : BigDecimal.ZERO;
+        log.info("Valor de ten2 (%): {}", ten2.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
 
-        // Final Costs (CF)
-        BigDecimal finalCostsTotal = finalCosts != null ? finalCosts.stream()
-                .map(cost -> cost.type().equalsIgnoreCase("percentage") ? nominalValue.multiply(cost.value().divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)) : cost.value())
-                .reduce(BigDecimal.ZERO, BigDecimal::add) : BigDecimal.ZERO;
+        BigDecimal dPercent = ten2.divide(BigDecimal.ONE.add(ten2), 10, RoundingMode.HALF_UP);
+        log.info("Valor de dPercent: {}", dPercent);
+        log.info("Valor de dPercent (%): {}", dPercent.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
 
-        // Net Received Value (VNR)
-        BigDecimal netReceivedValue = deliveredValue.subtract(initialCostsTotal);
+        BigDecimal netValue = amount.multiply(BigDecimal.ONE.subtract(dPercent));
+        log.info("Valor de netValue: {}", netValue.setScale(2, RoundingMode.HALF_UP));
 
-        // Net Paid Value (VNP)
-        BigDecimal netPaidValue = nominalValue.add(finalCostsTotal);
+        BigDecimal discountInterest = amount.subtract(netValue);
+        log.info("Valor de discountInterest: {}", discountInterest.setScale(2, RoundingMode.HALF_UP));
 
-        if (netReceivedValue.compareTo(BigDecimal.valueOf(10)) < 0) {
-            throw new IllegalArgumentException("Net Received Value (VNR) is too small, leading to an unrealistic TCEA.");
+        BigDecimal totalInitialCosts = initialCosts.stream()
+                .map(CostsDto::value)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        log.info("Total Initial Costs: {}", totalInitialCosts);
+
+        BigDecimal totalFinalCosts = finalCosts.stream()
+                .map(CostsDto::value)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        log.info("Total Final Costs: {}", totalFinalCosts);
+
+        BigDecimal receivedValue = netValue.subtract(totalInitialCosts);
+        BigDecimal shipValue = amount.add(totalFinalCosts);
+
+        if (receivedValue.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Received value must be greater than zero");
         }
 
-        // Ensure VNP/VNR ratio is reasonable
-        BigDecimal ratio = netPaidValue.divide(netReceivedValue, 10, RoundingMode.HALF_UP);
-        if (ratio.compareTo(BigDecimal.valueOf(5)) > 0) {
-            throw new IllegalArgumentException("Ratio too high, possible calculation error.");
-        }
+        log.info("Received Value: {}", receivedValue);
+        log.info("Ship Value: {}", shipValue);
 
-        // TCEA Calculation
-        double exponent = 360.0 / discountDays;
-        double tceaCalculated = Math.pow(ratio.doubleValue(), exponent) - 1;
+        BigDecimal ratio = shipValue.divide(receivedValue, 10, RoundingMode.HALF_UP);
+        double exponentTCEA = 360.0 / discountDays;
+        BigDecimal tcea = BigDecimal.valueOf(Math.pow(ratio.doubleValue(), exponentTCEA))
+                .subtract(BigDecimal.ONE)
+                .multiply(BigDecimal.valueOf(100));
 
-        if (Double.isNaN(tceaCalculated) || Double.isInfinite(tceaCalculated) || tceaCalculated * 100 > 100) {
-            log.error("Calculated TCEA is unrealistically high: {}", tceaCalculated);
-            throw new IllegalArgumentException("Calculated TCEA is unrealistically high.");
-        }
+        log.info("TCEA Calculado: {}", tcea);
 
-        BigDecimal tcea = BigDecimal.valueOf(tceaCalculated).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP);
-        log.info("TCEA calculated: {}", tcea);
-        return tcea;
+        return tcea.setScale(2, RoundingMode.HALF_UP);
     }
-
-
 }

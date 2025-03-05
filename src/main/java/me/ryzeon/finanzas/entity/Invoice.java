@@ -43,9 +43,6 @@ public class Invoice {
     @Column(precision = 15, scale = 2)
     private BigDecimal amount;
 
-    @Column(precision = 15, scale = 2)
-    private BigDecimal igv;
-
     private Date emissionDate;
 
     private Date dueDate;
@@ -55,10 +52,10 @@ public class Invoice {
     private String terms;
 
     @Column(precision = 5, scale = 2)
-    private BigDecimal nominalRate;
+    private BigDecimal effectiveRate; // Tasa Efectiva
 
     @Column(precision = 5, scale = 2)
-    private BigDecimal effectiveRate;
+    private BigDecimal tepDays; // Tasa Efectiva en días
 
 
     @ManyToMany
