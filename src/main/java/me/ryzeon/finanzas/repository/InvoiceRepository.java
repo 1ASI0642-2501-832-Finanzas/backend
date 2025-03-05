@@ -16,4 +16,6 @@ import java.util.List;
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     List<Invoice> findAllByWallet(Wallet wallet);
+
+    void deleteAllByWalletId(Long id);
 }

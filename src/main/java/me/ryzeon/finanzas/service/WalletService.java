@@ -22,6 +22,7 @@ public interface WalletService {
 
     List<Wallet> getWalletsByUserIdentifier(String identifier);
 
+    @Transactional
     void deleteWalletById(Long id);
 
     Optional<Wallet> getWalletById(Long id);

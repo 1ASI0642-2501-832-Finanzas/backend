@@ -68,9 +68,13 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void deleteWalletById(Long id) {
-        if (!walletRepository.existsById(id)) {
+        Optional<Wallet> wallet = walletRepository.findById(id);
+        if (wallet.isEmpty()) {
             throw new EntityNotFoundException("Wallet not found");
         }
+        List<Invoice> invoices = invoiceRepository.findAllByWallet(wallet.get());
+        invoices.forEach(invoice -> invoiceRepository.deleteById(invoice.getId()));
+
         walletRepository.deleteById(id);
     }
 
