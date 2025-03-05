@@ -1,6 +1,7 @@
 package me.ryzeon.finanzas.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +26,17 @@ public record CreateInvoiceRequest(
         String currency,
         BigDecimal amount,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+        @Schema(description = "Emission date in the format dd-MM-yyyy", example = "28-02-2025")
         Date emissionDate,
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+        @Schema(description = "Due date in the format dd-MM-yyyy", example = "28-02-2025")
         Date dueDate,
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+        @Schema(description = "Discount date in the format dd-MM-yyyy", example = "28-02-2025")
         Date discountDate,
+
         String terms,
         BigDecimal effectiveRate,
         BigDecimal tepDays,
